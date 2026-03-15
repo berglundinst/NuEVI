@@ -3,15 +3,22 @@
 #endif
 
 #define REVB
+
+//Platform-specific defines if using Arduino IDE. You need to set both the "main type" and the "platform",
+//for example NURAD + NURAD_R2 if building for NuRAD R2. SEAMUS can be used in conjunction with NURAD and NURAD_R1.
+
 //#define NURAD
+//#define NURAD_R1
+//#define NURAD_R2
+//#define NUEVI
+//#define NUEVI_R1
+//#define NUEVI_R2
 //#define SEAMUS
-//#define LITE
-//#define EVIR2
 
 //#define I2CSCANNER
 
 #if defined(NURAD) //NuRAD <<<<<<<<<<<<<<<<<<<<<<<
-#if defined(LITE)  //NuRAD lite
+#if defined(NURAD_R2)  //NuRAD R2
 
 // Pin definitions
 
@@ -176,7 +183,7 @@
 
 #endif
 #else //NuEVI <<<<<<<<<<<<<<<<<<<<<<<
-#if defined(EVIR2)  //NuEVI R2
+#if defined(NUEVI_R2)  //NuEVI R2
 
 //Analog pressure sensors. Breath and optional bite
 #define breathSensorPin A0
@@ -350,6 +357,6 @@
  */
 
 #endif //REVB
-#endif //EVIR2
+#endif //NUEVI_R2
 #endif //NURAD
 

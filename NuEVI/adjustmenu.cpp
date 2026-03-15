@@ -17,7 +17,7 @@ extern Adafruit_MPR121 touchSensorRH;
 extern Adafruit_MPR121 touchSensorLH;
 extern Adafruit_MPR121 touchSensorRollers;
 #else
-#if defined(EVIR2)
+#if defined(NUEVI_R2)
 extern Adafruit_MPR121 touchSensorRollers;
 extern Adafruit_MPR121 touchSensorRH;
 #else
@@ -30,7 +30,7 @@ extern int calOffsetRollers[6];
 extern int calOffsetRH[12];
 extern int calOffsetLH[12];
 #endif
-#if defined(EVIR2)
+#if defined(NUEVI_R2)
 extern int calOffsetRollers[12];
 extern int calOffsetRH[12];
 #endif
@@ -100,7 +100,7 @@ static void extracSave(const AdjustMenuEntry& e) {
 }
 
 const AdjustMenuEntry extraSensorAdjustMenu = {
-#if defined(LITE)
+#if defined(NURAD_R2)
   "GLS/EC",
 #else
   "LIP/EC",
@@ -133,7 +133,7 @@ static void leverSave(const AdjustMenuEntry& e) {
 }
 
 const AdjustMenuEntry leverAdjustMenu = {
-  #if defined(LITE) || defined(EVIR2)
+  #if defined(PLATFORM_R2)
   "PAD", 
   #else
   "LEVER", 
@@ -167,11 +167,11 @@ void autoCalSelected() {
 // NuRAD/NuEVI sensor calibration
   // Extra Controller
   if(adjustOption == 3) {
-#if defined(LITE)
+#if defined(NURAD_R2)
     calRead = map(constrain(touchSensorRollers.filteredData(extraPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, extracHiLimit, extracLoLimit);
     calReadNext = map(constrain(touchSensorRollers.filteredData(extraPin2), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, extracHiLimit, extracLoLimit);
     if (calReadNext > calRead) calRead = calReadNext; //use highest value
-#elif defined(EVIR2)
+#elif defined(NUEVI_R2)
     calRead = map(constrain(touchSensorRollers.filteredData(extraPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, extracHiLimit, extracLoLimit);
     calReadNext = map(constrain(touchSensorRollers.filteredData(extraPin2), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, extracHiLimit, extracLoLimit);
     if (calReadNext > calRead) calRead = calReadNext; //use highest value
@@ -193,7 +193,7 @@ void autoCalSelected() {
   }
   // Pitch Bend
   if(adjustOption == 2) {
- #if defined(LITE) || defined(EVIR2)
+ #if defined(PLATFORM_R2)
     calRead = map(constrain(touchSensorRollers.filteredData(pbUpPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, pitchbHiLimit, pitchbLoLimit);
     calReadNext = map(constrain(touchSensorRollers.filteredData(pbDnPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, pitchbHiLimit, pitchbLoLimit);
 #else
@@ -208,12 +208,12 @@ void autoCalSelected() {
   }
   // Lever
   if(adjustOption == 5) {
-#if defined(LITE) || defined(EVIR2)
+#if defined(PLATFORM_R2)
     calRead = map(constrain(touchSensorRollers.filteredData(vibratoPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, leverHiLimit, leverLoLimit);
 #else
     calRead = touchRead(vibratoPin);
 #endif
-#if defined(SEAMUS) || defined(LITE) || defined(EVIR2)
+#if defined(SEAMUS) || defined(PLATFORM_R2)
 #else
     calRead = 3000-calRead;
 #endif
@@ -250,7 +250,7 @@ void autoCalSelected() {
     touch_Thr = map(ctouchThrVal,ctouchHiLimit,ctouchLoLimit,ttouchLoLimit,ttouchHiLimit);
     writeSetting(CTOUCH_THR_ADDR, ctouchThrVal);
   }
-#elif defined(EVIR2)
+#elif defined(NUEVI_R2)
   // Bite sensor
   if(adjustOption == 1) {
     // Pressure sensor
@@ -280,7 +280,7 @@ void autoCalSelected() {
   if(adjustOption == 1) {
     if (digitalRead(biteJumperPin)){ //PBITE (if pulled low with jumper, pressure sensor is used instead of capacitive bite sensing)
       // Capacitive sensor
-      #if defined(EVIR2)
+      #if defined(NUEVI_R2)
       //not done support for MPR121 bite pin yet
       #else
       calRead = touchRead(bitePin);
@@ -432,7 +432,7 @@ void plotSensorPixels(){
     if (biteJumper) { //PBITE (if pulled low with jumper or if on a NuRAD, use pressure sensor instead of capacitive bite sensor)
       biteSensor=analogRead(bitePressurePin); // alternative kind bite sensor (air pressure tube and sensor)  PBITE
     } else {
-#if defined(LITE) || defined(EVIR2)
+#if defined(PLATFORM_R2)
 #else
       biteSensor = touchRead(bitePin);     // get sensor data, do some smoothing - SENSOR PIN 17 - PCB PINS LABELED "BITE" (GND left, sensor pin right)
 #endif
@@ -445,7 +445,7 @@ void plotSensorPixels(){
     int pos2 = map(constrain(pbDn, pitchbLoLimit, pitchbHiLimit), pitchbLoLimit, pitchbHiLimit, 28, 118);
     redraw = updateSensorPixel(pos, pos2);
   }
-  #if defined(LITE) || defined(EVIR2)
+  #if defined(PLATFORM_R2)
   else if(adjustOption == 3) {
     int pos = map(constrain(exSensor, extracLoLimit, extracHiLimit), extracLoLimit, extracHiLimit, 28, 118);
     int pos2 = map(constrain(exSensor2, extracLoLimit, extracHiLimit), extracLoLimit, extracHiLimit, 28, 118);
@@ -479,7 +479,7 @@ void plotSensorPixels(){
     }
     redraw = 1;
   }
-  #elif defined(EVIR2)
+  #elif defined(NUEVI_R2)
     else if(adjustOption == 4) {
         display.drawLine(28,37,118,37,BLACK);
     for (byte i=0; i<12; i++){
@@ -515,12 +515,12 @@ void plotSensorPixels(){
   }
   #endif
   else if(adjustOption == 5) {
-#if defined(LITE) || defined(EVIR2)
+#if defined(PLATFORM_R2)
   int rd = map(constrain(touchSensorRollers.filteredData(vibratoPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, leverHiLimit, leverLoLimit);
 #else
   int rd = touchRead(vibratoPin);
 #endif
-#if defined(SEAMUS) || defined(LITE) || defined(EVIR2)
+#if defined(SEAMUS) || defined(PLATFORM_R2)
     int pos = map(constrain(rd, leverLoLimit, leverHiLimit), leverLoLimit, leverHiLimit, 28, 118);
 #else
      int pos = map(constrain(3000-rd, leverLoLimit, leverHiLimit), leverLoLimit, leverHiLimit, 28, 118);
