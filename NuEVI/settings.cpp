@@ -658,6 +658,7 @@ bool resetSure(bool factoryReset){
 
 //"Main loop". Just sits and wait for midi messages and lets the sysex handler do all the work.
 void configModeLoop() {
+  while(1) {
     usbMIDI.read();
     if (!digitalRead(ePin)){
       configShowMessage("Sending config...");
@@ -665,4 +666,5 @@ void configModeLoop() {
       configShowMessage("Config sent.");
       delay(1500);
     }
+  }
 }

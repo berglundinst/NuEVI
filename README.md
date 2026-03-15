@@ -13,10 +13,10 @@ NuEVI is easiest to build using the Arduino IDE. You will also need to download 
 
 A few libraries need to be added that are not part of the default Arduino install. These can be
 added directly via the Library Manager in the Arduino IDE:
-* Adafruit MPR121
+* Adafruit MPR121 (version 1.1.1. 1.2.0 and later have compatibility issues with Teensy 3.2)
 * Adafruit GFX
 * Adafruit SSD1306 (version 1.2.9 or above)
-* NuEVI also includes on the [Filters](https://github.com/JonHub/Filters) library by Jonathan Driscoll, but that is no longer an external dependency.
+* NuEVI also includes the [Filters](https://github.com/JonHub/Filters) library by Jonathan Driscoll, but that is no longer an external dependency.
 
 
 ### Compile options

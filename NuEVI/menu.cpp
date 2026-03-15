@@ -2052,11 +2052,9 @@ const MenuPageCustom patchMenuPage =  { nullptr, EMenuPageCustom, patchPageUpdat
 const MenuPageCustom idleMenuPage =   { nullptr, EMenuPageCustom, idlePageUpdate };
 
 const MenuPageCustom aboutMenuPage =  { nullptr, EMenuPageCustom,
-  [](KeyState& __unused input, uint32_t __unused timeNow) -> bool {
-    static uint32_t timer = 0;
+  [](KeyState& input, uint32_t __unused timeNow) -> bool {
     if(stateFirstRun) {
       display.clearDisplay();
-      timer = timeNow + 3500;
       stateFirstRun = 0;
       display.setCursor(49,0);
       display.setTextColor(WHITE);
@@ -2131,14 +2129,26 @@ const MenuPageCustom aboutMenuPage =  { nullptr, EMenuPageCustom,
           display.print("v");
         }
       }
-
+      display.setCursor(16,50);
+      display.print("U+D for cfg mode");      
 
       return true;
     } else {
-      if(timeNow >= timer) {
+
+      // Menu or enter to exit
+      if (input.current & BTN_MENU) {
         menuState = MAIN_MENU;
         stateFirstRun = 1;
+        return true;
       }
+
+      // Up + down to enter config mode
+      if ((input.current & BTN_UP) && (input.current & BTN_DOWN)) {
+        midiPanic(); //For good measure, in case something is playing
+        configModeSetup();
+        configModeLoop();
+      }
+
       return false;
     }
   }

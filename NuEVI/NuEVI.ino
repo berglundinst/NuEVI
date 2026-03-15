@@ -624,7 +624,6 @@ FilterOnePole breathFilter;
 FilterOnePole piezoFilter;
 IntervalTimer cvTimer;
 
-bool configManagementMode = false;
 bool i2cScan = false;
 
 
@@ -702,15 +701,15 @@ void setup() {
   #endif
 
   bool factoryReset = !digitalRead(ePin) && !digitalRead(mPin) && digitalRead(dPin) && digitalRead(uPin);
-  configManagementMode = !digitalRead(uPin) && !digitalRead(dPin) && digitalRead(ePin) && digitalRead(mPin);
+  bool configManagementMode = !digitalRead(uPin) && !digitalRead(dPin) && digitalRead(ePin) && digitalRead(mPin);
   i2cScan = !factoryReset && !digitalRead(mPin);
 
   initDisplay(); //Start up display and show logo
 
-  //If going into config management mode, stop here before we even touch the EEPROM.
+  //If going into config management mode, stop here and enter the loop before we even touch the EEPROM.
   if(configManagementMode) {
     configModeSetup();
-    return;
+    configModeLoop();
   }
 
   #if defined(I2CSCANNER)
@@ -887,12 +886,6 @@ void setup() {
 //_______________________________________________________________________________________________ MAIN LOOP
 
 void loop() {
-
-  //If in config mgmt loop, do that and nothing else
-  if(configManagementMode) {
-    configModeLoop();
-    return;
-  }
 
   breathFilter.input(analogRead(breathSensorPin));
   pressureSensor = constrain((int) breathFilter.output(), 0, 4095); // Get the filtered pressure sensor reading from analog pin A0, input from sensor MP3V5004GP
