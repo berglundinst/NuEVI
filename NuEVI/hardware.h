@@ -2,10 +2,8 @@
 #define __HARDWARE_H
 #endif
 
-#define REVB
-
-//Platform-specific defines if using Arduino IDE. You need to set both the "main type" and the "platform",
-//for example NURAD + NURAD_R2 if building for NuRAD R2. SEAMUS can be used in conjunction with NURAD and NURAD_R1.
+//Platform-specific defines if using Arduino IDE. You need to set the "instrument type", the "instrument version" and the "platform",
+//for example NURAD + NURAD_R2 + PLATFORM_R2 if building for NuRAD R2. SEAMUS can be used in conjunction with NURAD / NURAD_R1 / PLATFORM_R1.
 
 //#define NURAD
 //#define NURAD_R1
@@ -302,8 +300,6 @@
 #define MIDI_SERIAL Serial3
 #define WIDI_SERIAL Serial2
 
-#if defined(REVB)
-
 // MPR121 pins Rev B (angled pins at top edge for main keys and rollers)
 
 #define R1Pin 0
@@ -329,34 +325,7 @@
  *
  */
 
-# else //REV A
 
-// MPR121 pins Rev A (upright pins below MPR121 for main keys and rollers)
-
-#define R1Pin 10
-#define R2Pin 11
-#define R3Pin 8
-#define R4Pin 9
-#define R5Pin 6
-
-#define K4Pin 7
-#define K1Pin 4
-#define K2Pin 5
-#define K3Pin 2
-#define K5Pin 3
-#define K6Pin 0
-#define K7Pin 1
-
-/*
- *    PINOUT ON PCB vs PINS ON MPR121 - Rev. A
- *
- *    (R2)  (R4)  (K4)  (K2)  (K5)  (K7)  <-> (11)  (09)  (07)  (05)  (03)  (01)
- *
- *    (R1) (R3/6) (R5)  (K1)  (K3)  (K6)  <-> (10)  (08)  (06)  (04)  (02)  (00)
- *
- */
-
-#endif //REVB
 #endif //NUEVI_R2
 #endif //NURAD
 
