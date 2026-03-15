@@ -193,9 +193,8 @@ int touchRead(uint8_t pin)
 {
     // find mapped sensors
     int i = 0;
-    for(; i< 9 && touchPinMapping[i] != pin; ++i)
-    if( i < 9)
-        return touchValues[i];
+    for(; i< 9 && touchPinMapping[i] != pin; ++i) { /* */ }
+    if( i < 9) return touchValues[i];
     return 0;
 }
 
@@ -203,7 +202,7 @@ static void touchWrite(uint8_t pin, uint16_t value)
 {
     // find mapped sensors
     int i = 0;
-    for(; (i < 9) && (touchPinMapping[i] != pin); ++i)
+    for(; (i < 9) && (touchPinMapping[i] != pin); ++i) { /* */ }
     if( i < 9) touchValues[i] = value;
 }
 
@@ -439,7 +438,7 @@ static void SimLoop(std::function<bool()> continue_predicate, std::function<void
 {
     int doQuit = 0;
     uint32_t time;
-    while( continue_predicate() ) {
+    do {
 
         SDL_Event event;
         while( SDL_PollEvent(&event) ) {
@@ -533,7 +532,7 @@ static void SimLoop(std::function<bool()> continue_predicate, std::function<void
         if( timePassed < 16 ) {
             SDL_Delay( 16-timePassed );
         }
-    }
+    } while( continue_predicate() );
 }
 
 static int SimRun(std::string eepromFile, bool eepromWrite, bool factoryReset, bool configMode)
