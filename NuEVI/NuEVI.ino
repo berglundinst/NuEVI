@@ -624,7 +624,6 @@ FilterOnePole breathFilter;
 FilterOnePole piezoFilter;
 IntervalTimer cvTimer;
 
-bool configManagementMode = false;
 bool i2cScan = false;
 
 
@@ -702,7 +701,7 @@ void setup() {
   #endif
 
   bool factoryReset = !digitalRead(ePin) && !digitalRead(mPin) && digitalRead(dPin) && digitalRead(uPin);
-  configManagementMode = !digitalRead(uPin) && !digitalRead(dPin) && digitalRead(ePin) && digitalRead(mPin);
+  bool configManagementMode = !digitalRead(uPin) && !digitalRead(dPin) && digitalRead(ePin) && digitalRead(mPin);
   i2cScan = !factoryReset && !digitalRead(mPin);
 
   initDisplay(); //Start up display and show logo
