@@ -245,4 +245,6 @@ extern byte patchKey;
 
 extern unsigned int multiMap(unsigned short val, const unsigned short * _in, const unsigned short * _out, uint8_t size);
 
+extern bool configManagementMode;
+
 #endif

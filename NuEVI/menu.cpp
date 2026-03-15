@@ -2083,9 +2083,10 @@ const MenuPageCustom aboutMenuPage =  { nullptr, EMenuPageCustom,
 
       // Up + down to enter config mode
       if ((input.current & BTN_UP) && (input.current & BTN_DOWN)) {
+        menuState = DISPLAYOFF_IDL;
         midiPanic(); //For good measure, in case something is playing
+        configManagementMode = true;
         configModeSetup();
-        configModeLoop();
       }
 
       return false;
