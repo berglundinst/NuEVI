@@ -33,8 +33,12 @@
 #error "No target specified. Please define exactly one of NURAD_R1, NURAD_R2, NUEVI_R1 or NUEVI_R2."
 #endif
 
-#if (defined(NURAD) && defined(NUEVI)) || (!defined(PLATFORM_R1) && !defined(PLATFORM_R2))
+#if (defined(NURAD) && defined(NUEVI)) || (defined(PLATFORM_R1) && defined(PLATFORM_R2))
 #error "Multiple incompatible target flags defined. Please define exactly one of NURAD_R1, NURAD_R2, NUEVI_R1 or NUEVI_R2."
+#endif
+
+#if (defined(SEAMUS) && !defined(NURAD_R1))
+#error "SEAMUS can only be used together with NURAD_R1."
 #endif
 
 #if defined(NURAD_R2)  //NuRAD R2 <<<<<<<<<<<<<<<<<<<<<<<
