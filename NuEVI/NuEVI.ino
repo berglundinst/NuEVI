@@ -1655,7 +1655,7 @@ void pitch_bend() {
   vibMax = vibMaxList[vibSens - 1];
   vibMaxBite = vibMaxBiteList[vibSensBite - 1];
   int unmoved = 0;
-  if (1 == biteControl){ //bite vibrato
+  if (1 == biteControl || 4 == biteControl || 6 == biteControl || 7 == biteControl){ //bite vibrato
     if (biteJumper){ //PBITE (if pulled low with jumper, or NuRAD compile, use pressure sensor instead of capacitive bite sensor)
       vibReadBite = analogRead(bitePressurePin); // alternative kind bite sensor (air pressure tube and sensor)  PBITE
     } else {
@@ -2015,7 +2015,7 @@ void portamento_() {
   if (extraCT == 5){
     if (portamento) portSumCC += exSensorIndicator;
   } 
-  if (2 == biteControl) {
+  if (2 == biteControl || 5 == biteControl || 6 == biteControl || 7 == biteControl) {
     // Portamento is controlled with the bite sensor in the mouthpiece
     if (biteJumper) { //PBITE (if pulled low with jumper or if on a NuRAD, use pressure sensor instead of capacitive bite sensor)
       biteSensor=analogRead(bitePressurePin); // alternative kind bite sensor (air pressure tube and sensor)  PBITE

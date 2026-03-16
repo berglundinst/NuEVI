@@ -1531,7 +1531,7 @@ const MenuPage breathMenuPage = {
 const MenuEntrySub biteCtlMenu = {
   MenuType::ESub, "BITE CTL", "BITE DEST", &biteControl, 0, 7, MenuEntryFlags::EMenuEntryWrap,
   [](SubMenuRef __unused,char* out, const char ** __unused unit) {
-    const char* labs[] = { "OFF", "VIB", "GLD", "CC", "VIB+", "GLD+", "VG", "VG+" };
+    const char* labs[] = { "OFF", "VIB", "GLD", "CC", "VBCC", "GLCC", "VBGL", "ALL" };
     strncpy(out, labs[biteControl], 5);
   },
   [](SubMenuRef __unused sub) { writeSetting(BITECTL_ADDR,biteControl); }
