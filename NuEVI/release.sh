@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Extract version from config.h, e.g. "1.6.8" -> "168"
-VERSION=$(grep -oE '"[0-9]+\.[0-9]+\.[0-9]+"' config.h | tr -d '".')
+VERSION=$(grep 'FIRMWARE_VERSION' config.h | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | tr -d '.')
 
 echo "Building firmware version $VERSION"
 
