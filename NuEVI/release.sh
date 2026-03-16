@@ -7,8 +7,8 @@ VERSION=$(grep -oE '"[0-9]+\.[0-9]+\.[0-9]+"' config.h | tr -d '".')
 echo "Building firmware version $VERSION"
 
 # Clean rebuild of all environments
-#pio run --target clean
-#pio run
+pio run --target clean
+pio run
 
 mkdir -p release-fw
 
