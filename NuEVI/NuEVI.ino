@@ -349,7 +349,8 @@ byte saxFinger[10];
 byte bottom = 1;
 
 // Four Way Close variants (FWC), http://www.thejazzpianosite.com/jazz-piano-lessons/jazz-chord-voicings/four-way-close/
-// 6
+
+                            // 6
 const int blockFWC[4][12][3] = {{{-3, -5, -8},   // C or key base
                                  {-3, -5, -8},   // C# or base +1
                                  {-3, -6, -9},   // D or base +2
@@ -362,7 +363,7 @@ const int blockFWC[4][12][3] = {{{-3, -5, -8},   // C or key base
                                  {-4, -5, -9},   // A or base +9
                                  {-3, -5, -9},   // Bb or base +10
                                  {-3, -6, -9}},  // B or base +11
-                                                 // m6
+                            // m6
                                 {{-3, -5, -9},   // C or key base
                                  {-3, -5, -9},   // C# or base +1
                                  {-3, -6, -9},   // D or base +2
@@ -375,7 +376,7 @@ const int blockFWC[4][12][3] = {{{-3, -5, -8},   // C or key base
                                  {-4, -5, -9},   // A or base +9
                                  {-3, -6, -9},   // Bb or base +10
                                  {-3, -6, -9}},  // B or base +11
-                                                 // 7
+                            // 7
                                 {{-2, -5, -8},   // C or key base
                                  {-2, -5, -8},   // C# or base +1
                                  {-3, -6, -9},   // D or base +2
@@ -388,7 +389,7 @@ const int blockFWC[4][12][3] = {{{-3, -5, -8},   // C or key base
                                  {-3, -6, -9},   // A or base +9
                                  {-3, -6, -10},  // Bb or base +10
                                  {-3, -6, -9}},  // B or base +11
-                                                 // m7
+                            // m7
                                 {{-2, -5, -9},   // C or key base
                                  {-2, -5, -9},   // C# or base +1
                                  {-3, -6, -9},   // D or base +2
@@ -713,8 +714,7 @@ void setup() {
     }
 #endif
 
-    if (factoryReset)
-        factoryReset = resetSure(factoryReset);
+    if (factoryReset) factoryReset = resetSure(factoryReset);
 
     //Read eeprom data into global vars
     readEEPROM(factoryReset);
@@ -1189,24 +1189,6 @@ void loop() {
             }
             lastPinkyKey = pinkyKey;
         } else if (pinkySetting == GLD) {
-            /*if (pinkyKey && K7){
-        ledMeter(portLimit);
-        if (K6 && (portLimit < 127)){
-          if (currentTime - lvlTime > (LVL_TIMER_INTERVAL)){
-            portLimit++;
-            if (portamento && (portamento != 5)) midiSendControlChange(CCN_Port, portLimit);
-            lvlTime = currentTime;
-          }
-        } else if (K5 && (portLimit > 1)){
-          if (currentTime - lvlTime > (LVL_TIMER_INTERVAL)){
-            portLimit--;
-            if (portamento && (portamento != 5)) midiSendControlChange(CCN_Port, portLimit);
-            lvlTime = currentTime;
-          }
-        }
-      } else if (!pinkyKey && lastPinkyKey){
-        writeSetting(PORTLIMIT_ADDR,portLimit);
-      }*/
             lastPinkyKey = pinkyKey;
         }
     } else if (mainState == RISE_WAIT) {
@@ -1307,7 +1289,6 @@ void loop() {
                     unsigned int breathValHires = breathCurve(map(constrain(breathLevel, breathThrVal, breathMaxVal), breathThrVal, breathMaxVal, 0, 16383));
                     velocitySend = (breathValHires >> 7) & 0x007F;
                     velocitySend = constrain(velocitySend + velocitySend * .1 * velBias, 1, 127);
-                    //velocitySend = map(constrain(pressureSensor,breathThrVal,breathMaxVal),breathThrVal,breathMaxVal,7,127); // set new velocity value based on current pressure sensor level
                 }
                 activeNote = noteValueCheck(activeNote);
                 if ((parallelChord || subOctaveDouble || rotatorOn) && priority) { // poly playing, send old note off before new note on
@@ -1408,8 +1389,8 @@ void loop() {
     }
 
     if (currentTime - pixelUpdateTime > pixelUpdateInterval) {
-        // even if we just alter a pixel, the whole display is redrawn (35ms of MPU lockup) and we can't do that all the time
-        // this is one of the big reasons the display is for setup use only
+        // even if we just alter a pixel, the whole display is redrawn (35ms of MPU lockup) and we can't do
+        // that all the time. this is one of the big reasons the display is for setup use only
         drawSensorPixels(); // live sensor monitoring for the setup screens
         if (rotatorOn || slurSustain || parallelChord || subOctaveDouble || slurSostenuto || gateOpen) {
             statusLedFlip();
@@ -1454,8 +1435,6 @@ void loop() {
             cvPitchSum = cvPitch;
         int cvPitchTuned = 2 * (cvTune - 100) + map(cvPitchSum, 0, 4032, 0, 4032 + 2 * (cvScale - 100));
         analogWrite(dacPin, constrain(cvPitchTuned, 0, 4095));
-    } else if (dacMode == DAC_MODE_BREATH) { // else breath CV on DAC pin, directly to unused pin of MIDI DIN jack
-                                             //analogWrite(dacPin,breathCurve(map(constrain(pressureSensor,breathThrVal,breathMaxVal),breathThrVal,breathMaxVal,0,4095)));
     }
 
     midiDiscardInput();
@@ -1664,8 +1643,6 @@ void breath() {
     int breathCCval, breathCCvalFine, breathCC2val;
     unsigned int breathCCvalHires;
     breathLevel = constrain(pressureSensor, breathThrVal, breathMaxVal);
-    //breathLevel = breathLevel*0.6+pressureSensor*0.4; // smoothing of breathLevel value
-    ////////breathCCval = map(constrain(breathLevel,breathThrVal,breathMaxVal),breathThrVal,breathMaxVal,0,127);
     breathCCvalHires = breathCurve(map(constrain(breathLevel, breathThrVal, breathMaxVal), breathThrVal, breathMaxVal, 0, 16383));
     breathCCval = (breathCCvalHires >> 7) & 0x007F;
     breathCCvalFine = breathCCvalHires & 0x007F;
@@ -1809,8 +1786,7 @@ void pitch_bend() {
 #endif
     }
 
-    if (unmoved)
-        vibSignal = vibSignal / 2;
+    if (unmoved) vibSignal = vibSignal / 2;
 
     switch (vibRetn) { // moving baseline
     case 0:
@@ -1874,9 +1850,6 @@ void pitch_bend() {
         vibLedOff = 0;
     }
 
-    //Serial.print(pitchBend);
-    //Serial.print(" - ");
-    //Serial.println(oldpb);
 
     if (pbSend != oldpb) { // only send midi data if pitch bend has changed from previous value
         midiSendPitchBend(pbSend);
@@ -1948,7 +1921,6 @@ void extraController() {
 #if defined(PLATFORM_R2)
     exSensor = exSensor * 0.6 + 0.4 * map(constrain(touchSensorRollers.filteredData(extraPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, extracHiLimit, extracLoLimit);
     exSensor2 = exSensor2 * 0.6 + 0.4 * map(constrain(touchSensorRollers.filteredData(extraPin2), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, extracHiLimit, extracLoLimit);
-    //if (extraSrc) exSensorUse = exSensor; else exSensorUse = exSensor2;
     exSensorUse = exSensor2;
     int stripCClevel = 0;
     if (2 == stripControl) {                // strip/aux set to CC
@@ -2401,23 +2373,7 @@ void readSwitches() {
             touchValueRollers[i] = touchSensorRollers.filteredData(i) * (300 - calOffsetRollers[i]) / 300;
         }
 #if defined(SEAMUS)
-        /*
-        // 5-pin version
-        octaveR = 0;
-        if ((R5=(touchValueRollers[rPin5] < ctouchThrVal)) && ((touchValueRollers[rPin1] < ctouchThrVal))) octaveR = 6; //R6 = R5 && R1
-        else if (R5=(touchValueRollers[rPin5] < ctouchThrVal)) octaveR = 5; //R5
-        else if (R4=(touchValueRollers[rPin4] < ctouchThrVal)) octaveR = 4; //R4
-        else if ((R3=(touchValueRollers[rPin3] < ctouchThrVal)) && lastOctaveR) octaveR = 3; //R3
-        else if (R2=(touchValueRollers[rPin2] < ctouchThrVal)) octaveR = 2; //R2
-        else if (touchValueRollers[rPin1] < ctouchThrVal) octaveR = 1; //R1
-        else if (lastOctaveR > 1) {
-          octaveR = lastOctaveR;
-          if (otfKey && polySelect && (polySelect<RT1) && rotatorOn && (mainState == NOTE_OFF)) hmzKey = fingeredNote%12;
-          if (mainState == NOTE_OFF) currentRotation = 3; //rotator reset by releasing rollers
-        }
-  //if rollers are released and we are not coming down from roller 1, stay at the higher octave
-  //CV filter leak prevention when putting NuEVI aside
-      */
+
         // 5-pin version, 1 & 6 common
 
         R1 = (touchValueRollers[rPin1] < ctouchThrVal);
@@ -2567,8 +2523,6 @@ void readSwitches() {
     // Calculate midi note number from pressed keys
 
     if (0 == fingering) { //EWI standard fingering
-        //fingeredNote=startNote+1-2*LH1-(LHb && !(LH1 && LH2))-LH2-(LH2 && LH1)-2*LH3+LHp1-LHp2+(RHs && !LHp1)-RH1-(RH1 && LH3)-RH2-2*RH3+RHp1-RHp2-2*RHp3+octaveR*12+(octave-3)*12+transpose-12+qTransp;
-
         fingeredNoteUntransposed = startNote + 1 - 2 * LH1 - (LHb && !(LH1 && LH2)) - LH2 - (LH2 && LH1) - 2 * LH3 + LHp1 - LHp2 + (RHs && !LHp1) - RH1 - (RH1 && LH3) - RH2 - 2 * RH3 + RHp1 - RHp2 - 2 * RHp3 + octaveR * 12;
     } else if (1 == fingering) { //EWX extended EWI fingering - lift LH1 for extended range up, touch RHp3 for extended range down
         fingeredNoteUntransposed = startNote + 1 - 2 * LH1 - (LHb && !(LH1 && LH2)) - LH2 - (LH2 && LH1) - 2 * LH3 + LHp1 - LHp2 + (RHs && !LHp1) - RH1 - (RH1 && LH3) - RH2 - 2 * RH3 + RHp1 - RHp2 - 2 * RHp3 + 9 * (!LH1 && LH2 && LH3) - 10 * (!RH3 && RHp3) + octaveR * 12;
@@ -2607,14 +2561,6 @@ void readSwitches() {
                                    + (!LH2 || !LH3 || LHp2)            // Trill +1 achieved by lifting finger from LH2 or LH3, or touching LHp2
                                    + octaveR * 12;                     //Octave rollers
 
-        /*
-      //Evan special fingering test
-      fingeredNoteUntransposed = startNote
-      - 2*RH1 - RH2 - 3*RH3  //"Trumpet valves"
-      - 5*LH1              //Fifth key
-      - 12*LH3 - 24*LH2  //Octaves on LH2 and LH3
-      + octaveR*12;       //Octave rollers
-      */
     } else {                                                           // EVI fingering with reversed octave rollers
         fingeredNoteUntransposed = startNote - 2 * RH1 - RH2 - 3 * RH3 //"Trumpet valves"
                                    - 5 * LH1                           //Fifth key
@@ -2635,7 +2581,6 @@ void readSwitches() {
     // RH keys
     int touchValueRH[12];
     for (byte i = 0; i < 12; i++) {
-        //touchValueRH[i]=touchSensorRH.filteredData(i) - calOffsetRH[i];
         touchValueRH[i] = touchSensorRH.filteredData(i) * (300 - calOffsetRH[i]) / 300;
     }
     K1 = (touchValueRH[K1Pin] < ctouchThrVal);
@@ -2655,7 +2600,6 @@ void readSwitches() {
     // Octave rollers
     int touchValueRollers[12];
     for (byte i = 0; i < 12; i++) {
-        //touchValueRollers[i]=touchSensorRollers.filteredData(i) - calOffsetRollers[i];
         touchValueRollers[i] = touchSensorRollers.filteredData(i) * (300 - calOffsetRollers[i]) / 300;
     }
 
