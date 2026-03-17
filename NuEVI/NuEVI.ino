@@ -644,6 +644,13 @@ void cvUpdate() {
 #endif
 }
 
+void touchSensorFail() {
+    while (1) { // Touch sensor initialization failed - stop doing stuff
+        if (!digitalRead(dPin) && !digitalRead(ePin) && !digitalRead(uPin) && !digitalRead(mPin))
+            _reboot_Teensyduino_(); // reboot to program mode if all buttons pressed
+    }
+}
+
 void setup() {
 
     analogReadResolution(12); // set resolution of ADCs to 12 bit
@@ -728,28 +735,19 @@ void setup() {
     delay(100);
     analogWrite(bLedPin, BREATH_LED_BRIGHTNESS);
     if (!touchSensorRollers.begin(0x5D)) { //should be D
-        while (1) {                        // Touch sensor initialization failed - stop doing stuff
-            if (!digitalRead(dPin) && !digitalRead(ePin) && !digitalRead(uPin) && !digitalRead(mPin))
-                _reboot_Teensyduino_(); // reboot to program mode if all buttons pressed
-        }
+        touchSensorFail();
     }
     delay(100);
     analogWrite(bLedPin, 0);
     analogWrite(pLedPin, PORTAM_LED_BRIGHTNESS);
     if (!touchSensorLH.begin(0x5C)) {
-        while (1) { // Touch sensor initialization failed - stop doing stuff
-            if (!digitalRead(dPin) && !digitalRead(ePin) && !digitalRead(uPin) && !digitalRead(mPin))
-                _reboot_Teensyduino_(); // reboot to program mode if all buttons pressed
-        }
+        touchSensorFail();
     }
     delay(100);
     analogWrite(pLedPin, 0);
     analogWrite(eLedPin, PORTAM_LED_BRIGHTNESS);
     if (!touchSensorRH.begin(0x5B)) {
-        while (1) { // Touch sensor initialization failed - stop doing stuff
-            if (!digitalRead(dPin) && !digitalRead(ePin) && !digitalRead(uPin) && !digitalRead(mPin))
-                _reboot_Teensyduino_(); // reboot to program mode if all buttons pressed
-        }
+        touchSensorFail();
     }
     delay(100);
     analogWrite(eLedPin, 0);
@@ -762,26 +760,14 @@ void setup() {
 #endif
 
 #if defined(NUEVI_R2)
-    if (!touchSensorRollers.begin(0x5A)) {
-        while (1) { // Touch sensor initialization failed - stop doing stuff
-            if (!digitalRead(dPin) && !digitalRead(ePin) && !digitalRead(uPin) && !digitalRead(mPin))
-                _reboot_Teensyduino_(); // reboot to program mode if all buttons pressed
-        }
-    }
-    if (!touchSensorRH.begin(0x5B)) {
-        while (1) { // Touch sensor initialization failed - stop doing stuff
-            if (!digitalRead(dPin) && !digitalRead(ePin) && !digitalRead(uPin) && !digitalRead(mPin))
-                _reboot_Teensyduino_(); // reboot to program mode if all buttons pressed
-        }
+    if (!touchSensorRollers.begin(0x5A) || !touchSensorRH.begin(0x5B)) {
+        touchSensorFail();
     }
 #endif
 
 #if defined(NUEVI_R1)
     if (!touchSensor.begin(0x5A)) {
-        while (1) { // Touch sensor initialization failed - stop doing stuff
-            if (!digitalRead(dPin) && !digitalRead(ePin) && !digitalRead(uPin) && !digitalRead(mPin))
-                _reboot_Teensyduino_(); // reboot to program mode if all buttons pressed
-        }
+        touchSensorFail();
     }
 #endif
 
