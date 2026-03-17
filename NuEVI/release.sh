@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Extract version from config.h, e.g. "1.6.8" -> "168"
-VERSION=$(grep 'FIRMWARE_VERSION' config.h | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | tr -d '.')
+# Extract version from config.h, e.g. "1.6.8foo" -> "168foo"
+VERSION=$(grep 'FIRMWARE_VERSION' config.h | sed -E 's/.*FIRMWARE_VERSION[[:space:]]+"([^"]+)".*/\1/; s/[. ]//g')
 
 echo "Building firmware version $VERSION"
 
@@ -24,9 +24,9 @@ copy_env() {
   fi
 }
 
-copy_env nuevi         NuEVI-R1
+copy_env nuevi          NuEVI-R1
 copy_env nuevi_teensy40 NuEVI-R2
-copy_env nurad         NuRAD-R1
+copy_env nurad          NuRAD-R1
 copy_env nurad_teensy40 NuRAD-R2
 
 echo "Done."
