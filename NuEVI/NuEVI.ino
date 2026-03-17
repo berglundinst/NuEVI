@@ -946,10 +946,14 @@ void loop() {
             bool lockGlideKey = touchRead(lockGlidePin) > lockGlideKeyThr;
 #endif
 
-            bool bothPB = (pbUp > ((pitchbMaxVal + pitchbThrVal) / 2)) && (pbDn > ((pitchbMaxVal + pitchbThrVal) / 2));
-            bool justPbDn = !(pbUp > ((pitchbMaxVal + pitchbThrVal) / 2)) && (pbDn > ((pitchbMaxVal + pitchbThrVal) / 2));
-            bool justPbUp = (pbUp > ((pitchbMaxVal + pitchbThrVal) / 2)) && !(pbDn > ((pitchbMaxVal + pitchbThrVal) / 2));
-            bool noPb = !(pbUp > ((pitchbMaxVal + pitchbThrVal) / 2)) && !(pbDn > ((pitchbMaxVal + pitchbThrVal) / 2));
+            bool pbDnPressed = pbDn > ((pitchbMaxVal + pitchbThrVal) / 2);
+            bool pbUpPressed = pbUp > ((pitchbMaxVal + pitchbThrVal) / 2);
+
+            bool bothPB = pbUpPressed && pbDnPressed;
+            bool justPbDn = pbDnPressed && !pbUpPressed;
+            bool justPbUp = pbUpPressed && !pbDnPressed;
+            bool noPb = !pbUpPressed && !pbDnPressed;
+
             bool brSuck = analogRead(breathSensorPin) < (breathCalZero - 850);
             int pitchlatchForPatch = patchLimit(pitchlatch + 1);
 
