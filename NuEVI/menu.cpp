@@ -2012,7 +2012,7 @@ const MenuPageCustom aboutMenuPage = {nullptr, EMenuPageCustom,
                                                       display.print("v");
                                                   }
                                               }
-                                              display.setCursor(16, 50);
+                                              display.setCursor(16, 52);
                                               display.print("U+D for cfg mode");
 
                                               return true;
