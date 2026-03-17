@@ -274,6 +274,7 @@ void showVersion() {
     display.display();
 }
 
+#if defined(I2CSCANNER)
 void i2cScanDisplay() {
     uint8_t target; // slave addr
     byte error;
@@ -307,6 +308,7 @@ void i2cScanDisplay() {
         }
     }
 }
+#endif
 
 // Assumes dest points to a buffer of atleast 7 bytes.
 static const char *numToString(int16_t value, char *dest, bool plusSign = false) {
