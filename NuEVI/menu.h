@@ -45,7 +45,10 @@ void logoDisplay();
 void showVersion();
 void menu();
 void drawSensorPixels();
+
+#if defined(I2CSCANNER)
 void i2cScanDisplay();
+#endif
 
 int updateAdjustMenu(uint32_t timeNow, KeyState &input, bool firstRun, bool drawSensor);
 bool adjustPageUpdate(KeyState &input, uint32_t timeNow);
