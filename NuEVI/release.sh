@@ -7,8 +7,9 @@ VERSION=$(grep 'FIRMWARE_VERSION' config.h | sed -E 's/.*FIRMWARE_VERSION[[:spac
 echo "Building firmware version $VERSION"
 
 # Clean rebuild of all environments
+# Release build, hides build number from about menu
 pio run --target clean
-pio run
+PLATFORMIO_BUILD_FLAGS="-DRELEASE_BUILD" pio run
 
 mkdir -p release-fw
 

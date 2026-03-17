@@ -1947,7 +1947,7 @@ const MenuPageCustom aboutMenuPage = {nullptr, EMenuPageCustom,
                                               display.print("Firmware v");
                                               display.println(FIRMWARE_VERSION);
 
-#if defined(DEBUG)
+#if !defined(RELEASE_BUILD)
                                               display.setCursor(16, 22);
                                               display.print("Build ");
                                               display.print(BUILD_VERSION);
