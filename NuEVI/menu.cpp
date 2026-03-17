@@ -1017,21 +1017,6 @@ const MenuEntry *rotatorMenuEntries[] = {
     (MenuEntry *)&fwcLockHMenu,
     (MenuEntry *)&fwcDrop2Menu,
     (MenuEntry *)&rotatorPrioMenu,
-    /*(MenuEntry*)&rotatorParaMenu,
-  (MenuEntry*)&rotator1Menu,
-  (MenuEntry*)&rotator2Menu,
-  (MenuEntry*)&rotator3Menu,
-  (MenuEntry*)&rotator4Menu,
-  (MenuEntry*)&rotatorParaBMenu,
-  (MenuEntry*)&rotatorB1Menu,
-  (MenuEntry*)&rotatorB2Menu,
-  (MenuEntry*)&rotatorB3Menu,
-  (MenuEntry*)&rotatorB4Menu,
-  (MenuEntry*)&rotatorParaCMenu,
-  (MenuEntry*)&rotatorC1Menu,
-  (MenuEntry*)&rotatorC2Menu,
-  (MenuEntry*)&rotatorC3Menu,
-  (MenuEntry*)&rotatorC4Menu  */
     (MenuEntry *)&rotSubAMenu,
     (MenuEntry *)&rotSubBMenu,
     (MenuEntry *)&rotSubCMenu};
@@ -1054,16 +1039,6 @@ const MenuPage rotatorMenuPage = {
 //***********************************************************
 
 // Main menu
-/*
-const MenuEntrySub transposeMenu = {
-  MenuType::ESub, "TRANSPOSE", "TRANSPOSE", &transpose, 0, 24, MenuEntryFlags::ENone,
-  [](SubMenuRef __unused, char* out, const char** __unused unit) {
-    numToString(transpose - 12, out, true);
-  },
-  [](const MenuEntrySub &sub) { writeSetting(TRANSP_ADDR,*sub.valuePtr); }
-  , nullptr
-};
-*/
 static void transposeOptionGet(SubMenuRef __unused, char *out, const char **__unused) {
     switch (transpose) {
     case 0:
@@ -1386,8 +1361,6 @@ static bool midiEnterHandlerFunc() {
         return true;
     }
 
-    //writeSetting(MIDI_ADDR, MIDIchannel);
-    //return true;
 }
 
 const MenuEntrySub midiMenu = {
@@ -2413,26 +2386,6 @@ static bool idlePageUpdate(KeyState &__unused input, uint32_t __unused timeNow) 
             break;
 
         case BTN_MENU:
-            /* REMOVE ALL MODIFIER ENTRIES
-        if (pinkyKey && (exSensor >= ((extracThrVal+extracMaxVal)/2)) && !specialKey) { // switch breath activated legacy settings on/off
-          legacyBrAct = !legacyBrAct;
-          dipSwBits = dipSwBits ^ (1<<2);
-          writeSetting(DIPSW_BITS_ADDR,dipSwBits);
-          statusLedBlink();
-        } else if ((exSensor >= ((extracThrVal+extracMaxVal)/2)) && !specialKey) { // switch pb pad activated legacy settings control on/off
-          legacy = !legacy;
-          dipSwBits = dipSwBits ^ (1<<1);
-          writeSetting(DIPSW_BITS_ADDR,dipSwBits);
-          statusLedBlink();
-        } else if (pinkyKey && !specialKey){ //hold pinky key for rotator menu, and if too high touch sensing blocks regular menu, touching special key helps
-          display.ssd1306_command(SSD1306_DISPLAYON);
-          menuState= ROTATOR_MENU;
-          stateFirstRun = 1;
-        } else {
-          display.ssd1306_command(SSD1306_DISPLAYON);
-          menuState = MAIN_MENU;
-          stateFirstRun = 1;
-        }*/
             display.ssd1306_command(SSD1306_DISPLAYON);
             menuState = MAIN_MENU;
             stateFirstRun = 1;
