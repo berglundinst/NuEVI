@@ -891,8 +891,6 @@ void setup() {
     activeMIDIchannel = MIDIchannel;
     midiInitialize(MIDIchannel);
 
-    //Serial.begin(9600); // debug
-
     statusLedOn(); // Switch on the onboard LED to indicate power on/ready
 #if defined(PLATFORM_R1)
     cvTimer.begin(cvUpdate, 500); // Update breath CV output every 500 microseconds
@@ -1131,7 +1129,6 @@ void loop() {
                         if (!slurSostenuto) {
                             slurSostenuto = 1;
                             slurSustain = 0;
-                            //rotatorOn = 0;
                         } else
                             slurSostenuto = 0;
                     }
@@ -1203,7 +1200,6 @@ void loop() {
                     unsigned int breathValHires = breathCurve(map(constrain(breathLevel, breathThrVal, breathMaxVal), breathThrVal, breathMaxVal, 0, 16383));
                     velocitySend = (breathValHires >> 7) & 0x007F;
                     velocitySend = constrain(velocitySend + velocitySend * .1 * velBias, 1, 127);
-                    //velocitySend = map(constrain(max(pressureSensor,initial_breath_value),breathThrVal,breathMaxVal),breathThrVal,breathMaxVal,1,127);
                 } else
                     velocitySend = velocity;
                 breath(); // send breath data
@@ -1593,7 +1589,6 @@ static void startHarmonizerNotes(byte note) {
 // note: the _in array should have increasing values
 unsigned int multiMap(unsigned short val, const unsigned short *_in, const unsigned short *_out, uint8_t size) {
     // take care the value is within range
-    // val = constrain(val, _in[0], _in[size-1]);
     if (val <= _in[0])
         return _out[0];
     if (val >= _in[size - 1])
@@ -2369,7 +2364,6 @@ void readSwitches() {
         // Octave rollers
         int touchValueRollers[12];
         for (byte i = 0; i < 6; i++) {
-            //touchValueRollers[i]=touchSensorRollers.filteredData(i) - calOffsetRollers[i];
             touchValueRollers[i] = touchSensorRollers.filteredData(i) * (300 - calOffsetRollers[i]) / 300;
         }
 #if defined(SEAMUS)
@@ -2461,7 +2455,6 @@ void readSwitches() {
         // RH keys
         int touchValueRH[12];
         for (byte i = 0; i < 12; i++) {
-            //touchValueRH[i]=touchSensorRH.filteredData(i) - calOffsetRH[i];
             touchValueRH[i] = touchSensorRH.filteredData(i) * (300 - calOffsetRH[i]) / 300;
         }
         RHs = (touchValueRH[RHsPin] < ctouchThrVal);
@@ -2482,7 +2475,6 @@ void readSwitches() {
         // LH keys
         int touchValueLH[12];
         for (byte i = 0; i < 12; i++) {
-            //touchValueLH[i]=touchSensorLH.filteredData(i) - calOffsetLH[i];
             touchValueLH[i] = touchSensorLH.filteredData(i) * (300 - calOffsetLH[i]) / 300;
         }
         LHs = (touchValueLH[LHsPin] < ctouchThrVal);
