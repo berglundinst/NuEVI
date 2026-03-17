@@ -1939,17 +1939,20 @@ const MenuPageCustom aboutMenuPage = {nullptr, EMenuPageCustom,
                                           if (stateFirstRun) {
                                               display.clearDisplay();
                                               stateFirstRun = 0;
-                                              display.setCursor(49, 0);
+                                              display.setCursor(42, 0);
                                               display.setTextColor(WHITE);
                                               display.setTextSize(0);
-#if defined(NURAD)
-                                              display.println("NuRAD");
-#else
-                                              display.println("NuEVI");
-#endif
+                                              display.println(PLATFORM_NAME);
                                               display.setCursor(16, 12);
-                                              display.print("firmware v.");
+                                              display.print("Firmware v");
                                               display.println(FIRMWARE_VERSION);
+
+#if defined(DEBUG)
+                                              display.setCursor(16, 22);
+                                              display.print("Build ");
+                                              display.print(BUILD_VERSION);
+#endif
+
                                               int vMeterReading = battAvg;
                                               int voltage = map(vMeterReading, 2200, 3060, 36, 50);
                                               int vFullLimit = 0;

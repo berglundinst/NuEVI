@@ -41,6 +41,20 @@
 #error "SEAMUS can only be used together with NURAD_R1."
 #endif
 
+//Nice looking platform names
+#if defined(NUEVI_R1)
+    #define PLATFORM_NAME "NuEVI R1"
+ #endif
+#if defined(NUEVI_R2)
+    #define PLATFORM_NAME "NuEVI R2"
+#endif
+#if defined(NURAD_R1)
+    #define PLATFORM_NAME "NuRAD R1"
+#endif
+#if defined(NURAD_R2)
+    #define PLATFORM_NAME "NuRAD R2"
+#endif
+
 #if defined(NURAD_R2)  //NuRAD R2 <<<<<<<<<<<<<<<<<<<<<<<
 
 // Pin definitions
