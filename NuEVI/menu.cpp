@@ -1022,15 +1022,8 @@ const MenuEntry *rotatorMenuEntries[] = {
     (MenuEntry *)&rotSubAMenu,
     (MenuEntry *)&rotSubBMenu,
     (MenuEntry *)&rotSubCMenu};
-/*
-const MenuPage rotatorMenuPage = {
-  "ROTATOR SETUP",
-  EMenuPageRoot,
-  CursorIdx::ERotator,
-  DISPLAYOFF_IDL,
-  ARR_LEN(rotatorMenuEntries), rotatorMenuEntries
-};
-*/
+
+
 const MenuPage rotatorMenuPage = {
     "POLY PLAY SETUP",
     0,
