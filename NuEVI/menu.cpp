@@ -1297,28 +1297,14 @@ const MenuEntrySub batteryTypeMenu = {
     },
     nullptr};
 
-#if defined(NURAD)
 const MenuEntry *extrasMenuEntries[] = {
     (MenuEntry *)&legacyPBMenu,
     (MenuEntry *)&legacyBRMenu,
     (MenuEntry *)&gateOpenMenu,
-    (MenuEntry *)&dacModeMenu,
-    (MenuEntry *)&batteryTypeMenu,
-    (MenuEntry *)&fastBootMenu,
-    (MenuEntry *)&fastPatchMenu,
-    (MenuEntry *)&cvTuneMenu,
-    (MenuEntry *)&cvScaleMenu,
-    (MenuEntry *)&cvEcVibMenu,
-    (MenuEntry *)&wlPowerMenu,
-    (MenuEntry *)&wlChannelMenu,
-};
-#else
-const MenuEntry *extrasMenuEntries[] = {
-    (MenuEntry *)&legacyPBMenu,
-    (MenuEntry *)&legacyBRMenu,
-    (MenuEntry *)&gateOpenMenu,
+#if defined(NUEVI)
     (MenuEntry *)&trill3Menu,
     (MenuEntry *)&bcasModeMenu,
+#endif
     (MenuEntry *)&dacModeMenu,
     (MenuEntry *)&batteryTypeMenu,
     (MenuEntry *)&fastBootMenu,
@@ -1329,7 +1315,6 @@ const MenuEntry *extrasMenuEntries[] = {
     (MenuEntry *)&wlPowerMenu,
     (MenuEntry *)&wlChannelMenu,
 };
-#endif
 
 const MenuPage extrasMenuPage = {
     "EXTRAS",
@@ -1756,7 +1741,6 @@ const MenuEntrySub lpinky3Menu = {
     [](const MenuEntrySub &__unused sub) { writeSetting(LPINKY3_ADDR, lpinky3); }, nullptr};
 #endif
 
-#if defined(NURAD)
 const MenuEntry *controlMenuEntries[] = {
     (MenuEntry *)&biteCtlMenu,
     (MenuEntry *)&biteCCMenu,
@@ -1770,62 +1754,19 @@ const MenuEntry *controlMenuEntries[] = {
     (MenuEntry *)&extraCC2Menu,
     (MenuEntry *)&harmonicsMenu,
     (MenuEntry *)&harmSelectMenu,
-#if defined(NURAD_R2)
+#if defined(PLATFORM_R2)
     (MenuEntry *)&stripCtlMenu,
     (MenuEntry *)&stripCCMenu,
 #endif
     (MenuEntry *)&deglitchMenu,
     (MenuEntry *)&pinkyMenu,
+#if defined(NURAD)
     (MenuEntry *)&lvlCtrlCCMenu,
     (MenuEntry *)&lpinky3Menu,
+#endif
     (MenuEntry *)&fingeringMenu,
     (MenuEntry *)&rollerMenu,
     (MenuEntry *)&pitchBendMenu};
-#endif
-#if defined(NUEVI_R2)
-const MenuEntry *controlMenuEntries[] = {
-    (MenuEntry *)&biteCtlMenu,
-    (MenuEntry *)&biteCCMenu,
-    (MenuEntry *)&leverCtlMenu,
-    (MenuEntry *)&leverCCMenu,
-    (MenuEntry *)&portMenu,
-    (MenuEntry *)&portLimitMenu,
-    (MenuEntry *)&portLoLimitMenu,
-    (MenuEntry *)&vibratoSubMenu,
-    (MenuEntry *)&extraMenu,
-    (MenuEntry *)&extraCC2Menu,
-    (MenuEntry *)&harmonicsMenu,
-    (MenuEntry *)&harmSelectMenu,
-    (MenuEntry *)&stripCtlMenu,
-    (MenuEntry *)&stripCCMenu,
-    (MenuEntry *)&deglitchMenu,
-    (MenuEntry *)&pinkyMenu,
-    (MenuEntry *)&lvlCtrlCCMenu,
-    (MenuEntry *)&fingeringMenu,
-    (MenuEntry *)&rollerMenu,
-    (MenuEntry *)&pitchBendMenu};
-#endif
-#if defined(NUEVI_R1)
-const MenuEntry *controlMenuEntries[] = {
-    (MenuEntry *)&biteCtlMenu,
-    (MenuEntry *)&biteCCMenu,
-    (MenuEntry *)&leverCtlMenu,
-    (MenuEntry *)&leverCCMenu,
-    (MenuEntry *)&portMenu,
-    (MenuEntry *)&portLimitMenu,
-    (MenuEntry *)&portLoLimitMenu,
-    (MenuEntry *)&vibratoSubMenu,
-    (MenuEntry *)&extraMenu,
-    (MenuEntry *)&extraCC2Menu,
-    (MenuEntry *)&harmonicsMenu,
-    (MenuEntry *)&harmSelectMenu,
-    (MenuEntry *)&deglitchMenu,
-    (MenuEntry *)&pinkyMenu,
-    (MenuEntry *)&lvlCtrlCCMenu,
-    (MenuEntry *)&fingeringMenu,
-    (MenuEntry *)&rollerMenu,
-    (MenuEntry *)&pitchBendMenu};
-#endif
 
 const MenuPage controlMenuPage = {
     "SETUP CTRLS",
