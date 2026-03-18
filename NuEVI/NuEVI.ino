@@ -788,45 +788,30 @@ void setup() {
 #endif
 
     //auto-calibrate the vibrato threshold while showing splash screen
-#if defined(NURAD_R2)
     vibZero = vibZeroBite = breathCalZero = 0;
     const int sampleCount = 4;
     for (int i = 1; i <= sampleCount; ++i) {
+
+#if defined(NURAD)
         vibZero += map(constrain(touchSensorRollers.filteredData(vibratoPin), ctouchLoLimit, ctouchHiLimit), ctouchLoLimit, ctouchHiLimit, leverHiLimit, leverLoLimit);
-        ;
-        breathCalZero += analogRead(breathSensorPin);
         vibZeroBite += analogRead(bitePressurePin);
-        statusLed(i & 1);
-        delay(fastBoot ? 75 : 220); //Shorter delay for fastboot
-    }
 #endif
-
 #if defined(NUEVI_R2)
-    vibZero = vibZeroBite = breathCalZero = 0;
-    const int sampleCount = 4;
-    for (int i = 1; i <= sampleCount; ++i) {
         vibZero += analogRead(piezoPin);
-        breathCalZero += analogRead(breathSensorPin);
         vibZeroBite += analogRead(bitePressurePin);
-        statusLed(i & 1);
-        delay(fastBoot ? 75 : 220); //Shorter delay for fastboot
-    }
 #endif
-
-#if defined(PLATFORM_R1)
-    vibZero = vibZeroBite = breathCalZero = 0;
-    const int sampleCount = 4;
-    for (int i = 1; i <= sampleCount; ++i) {
+#if defined(NUEVI_R1)
         vibZero += touchRead(vibratoPin);
-        breathCalZero += analogRead(breathSensorPin);
         if (biteJumper)
             vibZeroBite += analogRead(bitePressurePin);
         else
             vibZeroBite += touchRead(bitePin);
+#endif
+
+        breathCalZero += analogRead(breathSensorPin);
         statusLed(i & 1);
         delay(fastBoot ? 75 : 220); //Shorter delay for fastboot
     }
-#endif
 
     vibZero /= sampleCount;
     breathCalZero /= sampleCount;
