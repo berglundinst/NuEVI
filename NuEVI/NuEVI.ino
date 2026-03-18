@@ -1172,7 +1172,7 @@ void loop() {
                 // We should be at tonguing peak, so set velocity based on current pressureSensor value unless fixed velocity is set
                 breathLevel = constrain(max(pressureSensor, initial_breath_value), breathThrVal, breathMaxVal);
                 if (!velocity) {
-                    unsigned int breathValHires = breathCurve(map(constrain(breathLevel, breathThrVal, breathMaxVal), breathThrVal, breathMaxVal, 0, 16383));
+                    unsigned int breathValHires = breathCurve(map(breathLevel, breathThrVal, breathMaxVal, 0, 16383));
                     velocitySend = (breathValHires >> 7) & 0x007F;
                     velocitySend = constrain(velocitySend + velocitySend * .1 * velBias, 1, 127);
                 } else
@@ -1613,12 +1613,12 @@ void breath() {
     int breathCCval, breathCCvalFine, breathCC2val;
     unsigned int breathCCvalHires;
     breathLevel = constrain(pressureSensor, breathThrVal, breathMaxVal);
-    breathCCvalHires = breathCurve(map(constrain(breathLevel, breathThrVal, breathMaxVal), breathThrVal, breathMaxVal, 0, 16383));
+    breathCCvalHires = breathCurve(map(breathLevel, breathThrVal, breathMaxVal, 0, 16383));
     breathCCval = (breathCCvalHires >> 7) & 0x007F;
     breathCCvalFine = breathCCvalHires & 0x007F;
     breathCC2val = constrain(breathCCval * breathCC2Rise, 0, 127);
     if (brHarmSetting)
-        brHarmonics = map(constrain(breathLevel, breathThrVal, breathMaxVal), breathThrVal, breathMaxVal, 0, brHarmSetting);
+        brHarmonics = map(breathLevel, breathThrVal, breathMaxVal, 0, brHarmSetting);
     else
         brHarmonics = 0;
     if (breathCCval != oldbreath) { // only send midi data if breath has changed from previous value
