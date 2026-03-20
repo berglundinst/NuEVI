@@ -1,8 +1,10 @@
 CC=clang
 CXX=clang++
 
+BUILD_VERSION=$(shell git rev-parse --short HEAD 2> /dev/null || echo "?????")
+
 CFLAGS=-Wall -Wextra -Wpedantic -Wno-gnu
-CFLAGS += -DARDUINO=10808 -DTEENSYDUINO=146 -D__MK20DX256__ -DUSB_MIDI -DNUEVI_R1
+CFLAGS += -DARDUINO=10808 -DTEENSYDUINO=146 -D__MK20DX256__ -DUSB_MIDI -DNUEVI_R1 -DBUILD_VERSION=\"$(BUILD_VERSION)\"
 
 RELEASE ?= 0
 ifeq ($(RELEASE), 1)
