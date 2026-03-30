@@ -878,6 +878,21 @@ void loop() {
         return;
     }
 
+#if defined(LOOP_TIMING)
+    if (++loopcounter >= LOOPCOUNT) {
+        if (looptime_last >= 0) {
+            // Micros rolls over after around 70 minutes. This will create a negative interval which will never be the worst one. This is fine.
+            unsigned long looptime = micros() - looptime_last;
+            if (looptime > looptime_max) {
+                looptime_max = looptime;
+            }
+        } else {
+            //First run of loop(), just record it. Tiny chance this will skip an interval at rollover. This is fine.
+            looptime_last = micros();
+        }
+    }
+#endif
+
     breathFilter.input(analogRead(breathSensorPin));
     pressureSensor = constrain((int)breathFilter.output(), 0, 4095); // Get the filtered pressure sensor reading from analog pin A0, input from sensor MP3V5004GP
     readSwitches();

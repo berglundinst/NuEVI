@@ -248,3 +248,10 @@ extern unsigned int multiMap(unsigned short val, const unsigned short * _in, con
 extern bool configManagementMode;
 
 #endif
+
+#if defined(LOOP_TIMING)
+extern unsigned long looptime_max = 0;
+extern unsigned long looptime_last = -1;
+#define LOOPCOUNT 64
+extern int loopcounter = LOOPCOUNT; //Initialise high so first loop will start recording
+#endif

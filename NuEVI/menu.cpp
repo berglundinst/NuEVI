@@ -1952,7 +1952,15 @@ const MenuPageCustom aboutMenuPage = {nullptr, EMenuPageCustom,
                                                   }
                                               }
                                               display.setCursor(16, 52);
-                                              display.print("U+D for cfg mode");
+
+                                              // Print loop timing if enabled, otherwise hint for config mode
+                                              #if defined(LOOP_TIMING)
+                                                display.print("Loop: ");
+                                                float loopTime = 0.001 * looptime_max / LOOPCOUNT;
+                                                display.print(loopTime, 5);
+                                              #else
+                                                display.print("U+D for cfg mode");
+                                              #endif
 
                                               return true;
                                           } else {
