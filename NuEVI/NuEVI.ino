@@ -257,6 +257,7 @@ int exSensor = 0;
 int exSensor2 = 0;
 int exSensorUse = 0;
 int exSensorIndicator = 0;
+int padIndicator = 0;
 byte extracIsOn = 0;
 int oldextrac = 0;
 int oldextrac2 = 0;
@@ -1400,7 +1401,8 @@ void loop() {
         }
         if (cvVibRate) {
             int timeDivider = timeDividerList[cvVibRate];
-            int cvVib = map(((waveformsTable[map(currentTime % timeDivider, 0, timeDivider, 0, maxSamplesNum - 1)] - 2047) * exSensorIndicator), -259968, 259969, -11, 11);
+            int indicatorSum = constrain(exSensorIndicator+padIndicator, 0, 127);
+            int cvVib = map(((waveformsTable[map(currentTime % timeDivider, 0, timeDivider, 0, maxSamplesNum - 1)] - 2047) * indicatorSum), -259968, 259969, -11, 11);
             cvPitchSum = cvPitch + cvVib;
         } else
             cvPitchSum = cvPitch;
@@ -2174,6 +2176,7 @@ void leverCC_() {
         if (((leverPortRead) >= leverThrVal)) { // we are over the threshold, calculate CC value
             leverCClevel = map(constrain((leverPortRead), leverThrVal, leverMaxVal), leverThrVal, leverMaxVal, 0, 127);
         }
+        padIndicator = leverCClevel;
 #else
         if (((3000 - leverPortRead) >= leverThrVal)) { // we are over the threshold, calculate CC value
             leverCClevel = map(constrain((3000 - leverPortRead), leverThrVal, leverMaxVal), leverThrVal, leverMaxVal, 0, 127);
