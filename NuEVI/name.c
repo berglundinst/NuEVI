@@ -3,6 +3,7 @@
 // a .cpp file or your main sketch (the .ino file).
 
 #include "usb_names.h"
+#include "hardware.h"
 
 // Edit these lines to create your own name.  The length must
 // match the number of characters in your custom name.
