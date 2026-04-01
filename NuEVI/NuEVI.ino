@@ -12,6 +12,12 @@
 #include "settings.h"
 #include "led.h"
 
+#ifdef USE_RTOS
+#include <FreeRTOS.h>
+#include <task.h>
+#include <semphr.h>
+#endif
+
 /*
 NAME:                 NuEVI
 WRITTEN BY:           JOHAN BERGLUND
@@ -619,6 +625,12 @@ FilterOnePole breathFilter;
 FilterOnePole piezoFilter;
 IntervalTimer cvTimer;
 
+#ifdef USE_RTOS
+static SemaphoreHandle_t i2cMutex = NULL;
+static void sensorMidiTask(void *pvParameters);
+static void uiTask(void *pvParameters);
+#endif
+
 bool i2cScan = false;
 bool configManagementMode = false;
 
@@ -866,21 +878,31 @@ void setup() {
 #if defined(PLATFORM_R1)
     cvTimer.begin(cvUpdate, 500); // Update breath CV output every 500 microseconds
 #endif
+
+#ifdef USE_RTOS
+    // Create I2C mutex for shared bus access between tasks.
+    // Uses priority inheritance to minimize latency impact on sensor task.
+    i2cMutex = xSemaphoreCreateMutex();
+
+    // Sensor/MIDI task: highest priority - reads sensors, runs state machine, sends MIDI
+    xTaskCreate(sensorMidiTask, "SensMIDI", 4096, NULL, configMAX_PRIORITIES - 1, NULL);
+
+    // UI task: low priority - display updates, LEDs, battery monitoring, menu
+    xTaskCreate(uiTask, "UI", 4096, NULL, 1, NULL);
+
+    // Start the RTOS scheduler. Does not return.
+    // loop() will never be called (except in configManagementMode,
+    // which returns from setup() before reaching this point).
+    vTaskStartScheduler();
+#endif
 }
 
 //_______________________________________________________________________________________________ MAIN LOOP
 
-void loop() {
+//_______________________________________________________________________________________________ EXTRACTED FUNCTIONS
+// These functions are extracted from loop() to allow reuse from RTOS tasks.
 
-    //If in config mgmt loop, do that and nothing else
-    if (configManagementMode) {
-        configModeLoop();
-        return;
-    }
-
-    breathFilter.input(analogRead(breathSensorPin));
-    pressureSensor = constrain((int)breathFilter.output(), 0, 4095); // Get the filtered pressure sensor reading from analog pin A0, input from sensor MP3V5004GP
-    readSwitches();
+static void processStateMachine() {
     if (mainState == NOTE_OFF) {
         if (activeMIDIchannel != MIDIchannel) {
             activeMIDIchannel = MIDIchannel; // only switch channel if no active note
@@ -1329,25 +1351,9 @@ void loop() {
         if (pressureSensor > breathThrVal)
             cursorBlinkTime = millis(); // keep display from updating with cursor blinking if breath is over thr
     }
-    // Is it time to send more CC data?
-    currentTime = millis();
-    if ((currentTime - ccBreathSendTime) >= breathInterval) {
-        breath();
-        ccBreathSendTime = currentTime;
-    }
-    if (currentTime - ccSendTime > CC_INTERVAL) {
-        // deal with Pitch Bend, Modulation, etc.
-        pitch_bend();
-        extraController();
-        biteCC_();
-        leverCC_();
-        ccSendTime = currentTime;
-    }
-    if (currentTime - ccSendTime2 > CC_INTERVAL2) {
-        portamento_();
-        ccSendTime2 = currentTime;
-    }
+}
 
+static void processSlowUpdates() {
     if (currentTime - ccSendTime3 > CC_INTERVAL3) {
         if (gateOpenEnable || gateOpen)
             doorKnobCheck();
@@ -1371,6 +1377,9 @@ void loop() {
         pixelUpdateTime = currentTime;
     }
 
+}
+
+static void processCVOutput() {
     if (currentTime - cvpTrigTime > CVP_INTERVAL) {
         cvpTrig = 1;
         cvpTrigTime = currentTime;
@@ -1408,11 +1417,52 @@ void loop() {
         analogWrite(dacPin, constrain(cvPitchTuned, 0, 4095));
     }
 
+}
+
+//_______________________________________________________________________________________________ MAIN LOOP
+
+void loop() {
+
+
+    //If in config mgmt loop, do that and nothing else
+    if (configManagementMode) {
+        configModeLoop();
+        return;
+    }
+
+    breathFilter.input(analogRead(breathSensorPin));
+    pressureSensor = constrain((int)breathFilter.output(), 0, 4095); // Get the filtered pressure sensor reading from analog pin A0, input from sensor MP3V5004GP
+    readSwitches();
+    processStateMachine();
+    // Is it time to send more CC data?
+    currentTime = millis();
+    if ((currentTime - ccBreathSendTime) >= breathInterval) {
+        breath();
+        ccBreathSendTime = currentTime;
+    }
+    if (currentTime - ccSendTime > CC_INTERVAL) {
+        // deal with Pitch Bend, Modulation, etc.
+        pitch_bend();
+        extraController();
+        biteCC_();
+        leverCC_();
+        ccSendTime = currentTime;
+    }
+    if (currentTime - ccSendTime2 > CC_INTERVAL2) {
+        portamento_();
+        ccSendTime2 = currentTime;
+    }
+
+    processSlowUpdates();
+
+    processCVOutput();
+
     midiDiscardInput();
 
     //do menu stuff
     menu();
 }
+
 
 //_______________________________________________________________________________________________ FUNCTIONS
 
@@ -2692,3 +2742,117 @@ void readSwitches() {
     }
     lastFingering = fingeredNoteRead;
 }
+
+//_______________________________________________________________________________________________ RTOS TASKS
+
+#ifdef USE_RTOS
+
+// Sensor and MIDI task - highest priority
+// Reads breath sensor and touch inputs, runs the note state machine,
+// processes CC data (pitch bend, vibrato, portamento, etc.), and sends
+// MIDI output. This task preempts the UI task to ensure minimal latency
+// from sensor input to MIDI/CV output.
+//
+// I2C mutex is held only during touch sensor reads and CC functions that
+// access the MPR121 boards. The state machine and MIDI output run without
+// the mutex, keeping the critical section as short as possible.
+
+static void sensorMidiTask(void *pvParameters) {
+    (void)pvParameters;
+
+    for (;;) {
+        // Read breath pressure sensor (ADC, no I2C)
+        breathFilter.input(analogRead(breathSensorPin));
+        pressureSensor = constrain((int)breathFilter.output(), 0, 4095);
+
+        // Read touch sensors over I2C - hold mutex
+        xSemaphoreTake(i2cMutex, portMAX_DELAY);
+        readSwitches();
+        xSemaphoreGive(i2cMutex);
+
+        // State machine: note on/off, velocity, fingering changes
+        // No I2C needed - only CPU work and MIDI sends (USB + Serial)
+        processStateMachine();
+
+        // Send breath CC at configured interval
+        currentTime = millis();
+        if ((currentTime - ccBreathSendTime) >= breathInterval) {
+            breath();
+            ccBreathSendTime = currentTime;
+        }
+
+        // Process CCs that read I2C sensors on R2 (pitch bend pads,
+        // extra controller, lever, portamento via MPR121)
+        xSemaphoreTake(i2cMutex, portMAX_DELAY);
+        if (currentTime - ccSendTime > CC_INTERVAL) {
+            pitch_bend();
+            extraController();
+            biteCC_();
+            leverCC_();
+            ccSendTime = currentTime;
+        }
+        if (currentTime - ccSendTime2 > CC_INTERVAL2) {
+            portamento_();
+            ccSendTime2 = currentTime;
+        }
+        xSemaphoreGive(i2cMutex);
+
+        // CV output (DAC/PWM, no I2C)
+        processCVOutput();
+
+        // Discard any incoming MIDI data
+        midiDiscardInput();
+
+        // Target ~1kHz sensor read rate
+        vTaskDelay(pdMS_TO_TICKS(1));
+    }
+}
+
+// UI task - low priority
+// Handles display updates (SSD1306 over I2C), LED indicators, battery
+// monitoring, and menu navigation. This task runs whenever the sensor
+// task is sleeping (between sensor reads). Display updates are the
+// slowest operation (~35ms for a full redraw) but this only affects
+// the UI task, never the sensor/MIDI path.
+
+static void uiTask(void *pvParameters) {
+    (void)pvParameters;
+
+    for (;;) {
+        unsigned long now = millis();
+
+        // Battery check and LED updates (no I2C, just ADC + GPIO)
+        if (now - ccSendTime3 > CC_INTERVAL3) {
+            if (gateOpenEnable || gateOpen)
+                doorKnobCheck();
+            battCheck();
+            if (((pinkySetting == LVL) || (pinkySetting == LVLP) || (pinkySetting == GLD)) && pinkyKey && K7 && (mainState == NOTE_OFF)) {
+                // show LVL indication
+            } else
+                updateSensorLEDs();
+            ccSendTime3 = now;
+        }
+
+        // Display and menu (I2C to SSD1306 - hold mutex)
+        xSemaphoreTake(i2cMutex, portMAX_DELAY);
+
+        if (now - pixelUpdateTime > pixelUpdateInterval) {
+            drawSensorPixels();
+            if (rotatorOn || slurSustain || parallelChord || subOctaveDouble || slurSostenuto || gateOpen) {
+                statusLedFlip();
+            } else {
+                statusLedOn();
+            }
+            pixelUpdateTime = now;
+        }
+
+        menu();
+
+        xSemaphoreGive(i2cMutex);
+
+        // UI updates at ~50Hz (plenty for human interaction)
+        vTaskDelay(pdMS_TO_TICKS(20));
+    }
+}
+
+#endif // USE_RTOS
