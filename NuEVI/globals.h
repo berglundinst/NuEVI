@@ -250,8 +250,8 @@ extern bool configManagementMode;
 #endif
 
 #if defined(LOOP_TIMING)
-extern unsigned long looptime_max = 0;
-extern unsigned long looptime_last = -1;
+extern unsigned long looptime_max;
+extern unsigned long looptime_last;
 #define LOOPCOUNT 64
-extern int loopcounter = LOOPCOUNT; //Initialise high so first loop will start recording
+extern int loopcounter;
 #endif

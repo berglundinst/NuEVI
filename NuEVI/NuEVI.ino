@@ -622,6 +622,15 @@ IntervalTimer cvTimer;
 bool i2cScan = false;
 bool configManagementMode = false;
 
+
+#if defined(LOOP_TIMING)
+unsigned long looptime_max = 0;
+unsigned long looptime_last = -1;
+int loopcounter = LOOPCOUNT; //Initialise high so first loop will start recording
+#else
+#error NO WORK TODAY
+#endif
+
 //_______________________________________________________________________________________________ SETUP
 
 //Update CV output pin, run from timer.
