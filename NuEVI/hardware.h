@@ -283,8 +283,8 @@
 #define K7Pin 0//11
 #define specialKeyPin 4       // SK  7
 #define halfPitchBendKeyPin 3 // PD  8
-#define patchPinEVI 6
-#define lockGlidePin 7
+#define patchPinEVI 7
+#define lockGlidePin 6
 
 #endif
 
